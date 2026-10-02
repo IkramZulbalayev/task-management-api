@@ -1,111 +1,540 @@
-# Task Manager API
+# Task Manager
 
-A multi-tenant task management REST API built with **Spring Boot** and **Spring Security**, featuring JWT-based authentication, role-based access control, and organization-scoped data isolation. Built as a portfolio project to demonstrate backend fundamentals: secure auth, relational data modeling, and clean REST design.
+A full-stack, multi-tenant task management application built with **Java, Spring Boot, React, TypeScript, MySQL, and Docker**.
+
+The project demonstrates secure authentication, role-based authorization, organization-scoped data isolation, REST API design, frontend-backend integration, automated testing, and containerized deployment.
+
+---
 
 ## Features
 
-- **JWT Authentication** — stateless login/register flow using Spring Security and JSON Web Tokens
-- **Role-Based Access Control** — admin-only actions (creating projects/tasks) enforced via `@PreAuthorize`
-- **Multi-Tenant Data Isolation** — users belong to an organization; all data (projects, tasks) is scoped to the current user's organization
-- **Full CRUD** — complete create/read/update/delete on projects and tasks; create/read/delete on comments
-- **Custom Exception Handling** — `ResourceNotFoundException` and `AccessDeniedException` for clean, meaningful error responses
-- **Dashboard Aggregation** — summary endpoint reporting total projects, total tasks, task counts by status, and overdue task counts
-- **Interactive API Docs** — Swagger UI / OpenAPI 3 documentation with built-in Bearer token authorization
-- **Dockerized** — runs via Docker Compose alongside a MySQL container
+### Authentication & Security
+
+- JWT-based authentication
+- User registration and login
+- Role-based access control
+- Admin-only project and task creation
+- Protected frontend routes
+- CORS configuration for frontend-backend communication
+
+### Multi-Tenant Data Isolation
+
+Each user belongs to an organization.
+
+All projects, tasks, comments, and dashboard data are scoped to the authenticated user's organization.
+
+Users cannot access or modify resources belonging to another organization.
+
+This isolation is enforced in the service layer and covered by automated unit tests.
+
+### Projects
+
+- Create projects
+- View organization projects
+- Update projects
+- Delete projects
+- View project-specific tasks
+
+### Tasks
+
+- Create tasks
+- Update tasks
+- Delete tasks
+- Assign tasks to organization members
+- Set task priority
+- Change task status
+- Set due dates
+- Enforce organization-level authorization
+
+A task cannot be assigned to a user from another organization.
+
+### Comments
+
+- Add comments to tasks
+- View task comments
+- Delete comments
+- Organization-scoped access
+
+### Dashboard
+
+Organization-wide dashboard with:
+
+- Total projects
+- Total tasks
+- Tasks grouped by status
+- Overdue task count
+
+---
 
 ## Tech Stack
 
-| Layer | Technology |
+### Backend
+
+| Technology | Purpose |
 |---|---|
-| Language | Java |
-| Framework | Spring Boot 4 |
-| Security | Spring Security, JWT |
-| Database | MySQL |
-| ORM | Hibernate / Spring Data JPA |
-| API Docs | springdoc-openapi (Swagger UI) |
-| Build Tool | Maven |
-| Containerization | Docker, Docker Compose |
+| Java | Backend language |
+| Spring Boot | Application framework |
+| Spring Security | Authentication and authorization |
+| JWT | Stateless authentication |
+| Spring Data JPA | Data access |
+| Hibernate | ORM |
+| MySQL | Relational database |
+| Maven | Build tool |
+| Swagger / OpenAPI | API documentation |
 
-## Data Model
+### Frontend
 
+| Technology | Purpose |
+|---|---|
+| React | UI framework |
+| TypeScript | Type-safe frontend development |
+| Axios | HTTP communication |
+| React Router | Client-side routing |
+| CSS | Application styling |
+
+### Testing
+
+| Technology | Purpose |
+|---|---|
+| JUnit | Unit testing |
+| Mockito | Mocking dependencies |
+| AssertJ | Fluent assertions |
+
+### DevOps
+
+- Docker
+- Docker Compose
+
+---
+
+## Architecture
+
+The backend follows a layered architecture:
+
+```text
+Controller
+    ↓
+Service
+    ↓
+Repository
+    ↓
+Database
 ```
-organizations
-    └── users (belongs to an organization; has a role, e.g. ADMIN/USER)
-            └── projects (created by a user, scoped to an organization)
-                    └── tasks (belongs to a project; optional assignee)
-                            └── comments (belongs to a task; has an author)
+
+The service layer contains:
+
+- Business logic
+- Authorization checks
+- Organization isolation
+- Resource validation
+
+The frontend communicates with the backend through REST APIs.
+
+```text
+React + TypeScript
+        ↓
+     REST API
+        ↓
+ Spring Boot
+        ↓
+ Spring Security
+        ↓
+ Service Layer
+        ↓
+ Spring Data JPA
+        ↓
+      MySQL
 ```
 
-All foreign keys enforce referential integrity, and access checks ensure users can only see/modify data within their own organization.
+---
 
-## Getting Started
+## Domain Model
 
-### Prerequisites
-
-- Java 21+ (or whatever JDK version your `pom.xml` targets)
-- Docker & Docker Compose
-- Maven (or use the included `./mvnw` wrapper — no local install needed)
-
-### Run with Docker Compose
-
-```bash
-./mvnw clean package -DskipTests
-docker compose up --build
+```text
+Organization
+    └── Users
+          └── Projects
+                └── Tasks
+                      └── Comments
 ```
 
-The API will be available at `http://localhost:8080`.
+Main relationships:
 
-### API Documentation
+- A user belongs to an organization
+- A project belongs to an organization
+- A project is created by a user
+- A task belongs to a project
+- A task may be assigned to a user
+- A comment belongs to a task
+- A comment has an author
 
-Once running, open:
+All organization-owned data is protected from cross-tenant access.
 
+---
+
+## Frontend
+
+The frontend is built with **React + TypeScript** and consumes the Spring Boot REST API end-to-end.
+
+It includes:
+
+- Login page
+- Registration page
+- Dashboard
+- Project list
+- Project details
+- Task management
+- Task details
+- Comments
+- User profile
+- Protected routes
+- Reusable UI components
+- Role-aware UI behavior
+
+### Frontend Screenshots
+
+#### Project Management — Admin
+
+Admins can create and manage organization projects.
+
+<img width="1920" height="1001" alt="Task manager" src="https://github.com/user-attachments/assets/d917dc98-3c94-4395-a06d-fe85a96ee5f3" />
+
+
+#### Task Management — Admin
+
+Admins can create tasks with a title, description, due date, and priority.
+
+<img width="1920" height="997" alt="Task manager" src="https://github.com/user-attachments/assets/cdfe37d5-52f3-49b2-891a-121c8ccf949f" />
+
+
+#### Task Details — Admin
+
+Administrators can view task information, edit or delete tasks, and manage comments.
+
+<img width="1920" height="996" alt="Task manager" src="https://github.com/user-attachments/assets/6e55b222-968f-4d53-8bd6-80370ffc3658" />
+
+
+#### Member View
+
+Regular organization members can view projects available within their organization while administrative actions remain restricted.
+
+<img width="1920" height="1004" alt="Task manager" src="https://github.com/user-attachments/assets/24991277-5358-47b9-b3b2-ba30463e2dff" />
+
+
+#### Task Comments
+
+Organization members can collaborate by adding comments to tasks.
+
+<img width="1920" height="998" alt="Task manager" src="https://github.com/user-attachments/assets/b827ca71-21af-499d-9ff3-60d7ed0c67ea" />
+
+
+---
+
+## Automated Testing
+
+The project currently includes **36 passing tests** using:
+
+- JUnit
+- Mockito
+- AssertJ
+
+Tests cover:
+
+- Authentication
+- Organization management
+- Projects
+- Tasks
+- Comments
+- CRUD operations
+- Authorization rules
+- Error scenarios
+- Multi-tenant data isolation
+- Invalid cross-organization task assignment
+
+### Multi-Tenant Test Example
+
+```text
+User from Organization A
+        ↓
+Access Project from Organization A
+        ✅ Allowed
+
+User from Organization A
+        ↓
+Access Project from Organization B
+        ❌ Denied
 ```
-http://localhost:8080/swagger-ui/index.html
+
+### Cross-Organization Assignment Example
+
+```text
+Task belongs to Organization A
+        ↓
+Assign user from Organization B
+        ❌ Denied
 ```
 
-to explore and test all endpoints interactively. Protected endpoints require a Bearer token — click **Authorize** in the Swagger UI, paste your JWT (obtained from `/api/auth/login`), and all subsequent requests will include it automatically.
+This verifies that organization isolation is enforced by the backend rather than relying only on frontend restrictions.
+
+### Test Coverage Examples
+
+The test suite includes cases such as:
+
+- Successful authentication
+- Invalid authentication attempts
+- Creating projects successfully
+- Rejecting access to projects from another organization
+- Creating tasks successfully
+- Preventing cross-organization task access
+- Preventing assignment of users from another organization
+- Updating tasks
+- Deleting tasks
+- Adding and deleting comments
+- Handling missing resources
+- Verifying repository interactions with Mockito
+
+### Test Results
+
+All current tests pass successfully.
+
+<img width="1855" height="320" alt="Task manager" src="https://github.com/user-attachments/assets/cfb03402-fdcc-4425-a899-e41859fb77ac" />
+
+---
 
 ## API Overview
 
-### Auth
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| POST | `/api/auth/register` | Register a new user + organization | No |
-| POST | `/api/auth/login` | Log in, returns a JWT | No |
+### Authentication
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/auth/register` | Register user and organization |
+| POST | `/api/auth/login` | Authenticate and receive JWT |
 
 ### Projects
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| GET | `/api/projects` | List projects in your organization | Yes |
-| POST | `/api/projects` | Create a project | Yes (Admin) |
-| PUT | `/api/projects/{id}` | Update a project | Yes |
-| DELETE | `/api/projects/{id}` | Delete a project | Yes |
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/projects` | Get organization projects |
+| POST | `/api/projects` | Create project |
+| PUT | `/api/projects/{id}` | Update project |
+| DELETE | `/api/projects/{id}` | Delete project |
 
 ### Tasks
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| GET | `/api/tasks?projectId={id}` | List tasks for a project | Yes |
-| POST | `/api/tasks` | Create a task | Yes (Admin) |
-| PUT | `/api/tasks/{id}` | Update a task (status, priority, assignee, etc.) | Yes |
-| DELETE | `/api/tasks/{id}` | Delete a task | Yes |
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/tasks?projectId={id}` | Get tasks for project |
+| POST | `/api/tasks` | Create task |
+| PUT | `/api/tasks/{id}` | Update task |
+| DELETE | `/api/tasks/{id}` | Delete task |
 
 ### Comments
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| GET | `/api/comments?taskId={id}` | List comments on a task | Yes |
-| POST | `/api/comments` | Add a comment to a task | Yes |
-| DELETE | `/api/comments/{id}` | Delete a comment | Yes |
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/comments?taskId={id}` | Get task comments |
+| POST | `/api/comments` | Add comment |
+| DELETE | `/api/comments/{id}` | Delete comment |
 
 ### Dashboard
-| Method | Endpoint | Description | Auth Required |
-|---|---|---|---|
-| GET | `/api/dashboard` | Org-wide summary: total projects, total tasks, tasks by status, overdue count | Yes |
+
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/dashboard` | Get organization dashboard statistics |
+
+---
 
 ## Authentication Flow
 
-1. `POST /api/auth/register` with `firstName`, `lastName`, `email`, `password`, `organizationName` to create an account (this also creates a new organization).
-2. `POST /api/auth/login` with `email` and `password` to receive a JWT.
-3. Include the token on all subsequent requests:
-   ```
-   Authorization: Bearer <token>
-   ```
+```text
+Register / Login
+      ↓
+Backend validates credentials
+      ↓
+JWT generated
+      ↓
+Frontend stores token
+      ↓
+Token sent with protected requests
+```
+
+Protected requests include:
+
+```http
+Authorization: Bearer <token>
+```
+
+If the API returns `401 Unauthorized`, the frontend clears the session and redirects the user to the login page.
+
+---
+
+## Running the Backend
+
+### Requirements
+
+- Java 21+
+- Maven
+- Docker
+- Docker Compose
+
+### Build the Backend
+
+```bash
+./mvnw clean package
+```
+
+### Run with Docker
+
+```bash
+docker compose up --build
+```
+
+### Backend URL
+
+```text
+http://localhost:8080
+```
+
+### Swagger UI
+
+```text
+http://localhost:8080/swagger-ui/index.html
+```
+
+---
+
+## Running the Frontend
+
+### Open the Frontend Directory
+
+```bash
+cd frontend
+```
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Start the Frontend
+
+```bash
+npm run dev
+```
+
+The frontend will usually be available at:
+
+```text
+http://localhost:5173
+```
+
+Make sure the backend is running on:
+
+```text
+http://localhost:8080
+```
+
+---
+
+## Project Structure
+
+```text
+task-management-api/
+│
+├── src/
+│   ├── main/
+│   │   └── java/
+│   │       └── com/project/taskmanager/
+│   │           ├── auth/
+│   │           ├── comment/
+│   │           ├── dashboard/
+│   │           ├── organization/
+│   │           ├── project/
+│   │           ├── security/
+│   │           ├── task/
+│   │           └── user/
+│   │
+│   └── test/
+│       └── java/
+│           └── com/project/taskmanager/service/
+│               ├── AuthServiceTest.java
+│               ├── CommentServiceTest.java
+│               ├── OrganizationServiceTest.java
+│               ├── ProjectServiceTest.java
+│               └── TaskServiceTest.java
+│
+├── frontend/
+│   ├── screenshots/
+│   │   ├── create-project.png
+│   │   ├── create-task.png
+│   │   ├── task-details-admin.png
+│   │   ├── projects-member.png
+│   │   ├── task-comments-member.png
+│   │   ├── all-tests-passing.png
+│   │   ├── task-service-tests.png
+│   │   └── project-service-tests.png
+│   │
+│   ├── src/
+│   │   ├── api/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── pages/
+│   │   ├── types/
+│   │   ├── utils/
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   │
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── vite.config.ts
+│
+├── Dockerfile
+├── docker-compose.yml
+├── pom.xml
+└── README.md
+```
+
+---
+
+## Key Backend Concepts Demonstrated
+
+- REST API design
+- JWT authentication
+- Spring Security
+- Role-based authorization
+- Service-layer authorization
+- Multi-tenancy
+- Relational database modeling
+- Spring Data JPA
+- Dependency injection
+- DTO-based API responses
+- Exception handling
+- CORS
+- Unit testing
+- Mocking with Mockito
+- Dockerized deployment
+- Frontend-backend integration
+
+---
+
+## Future Improvements
+
+Possible future additions:
+
+- Refresh tokens
+- Task filtering and pagination
+- Task search
+- Task history / audit log
+- Notifications
+- More advanced role management
+- GitHub Actions CI
+- Integration tests
+- Frontend Docker container
+- Production deployment
+
+---
+
+## About
+
+This project was built as a portfolio and university project to demonstrate full-stack development with a strong focus on **Java backend engineering, security, multi-tenant architecture, automated testing, and REST API design**.
