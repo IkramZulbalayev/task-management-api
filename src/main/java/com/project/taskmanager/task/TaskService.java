@@ -37,8 +37,7 @@ public class TaskService {
 
         User assignee = null;
         if (assigneeId != null) {
-            assignee = userRepository.findById(assigneeId)
-                    .orElseThrow(() -> new RuntimeException("Assignee not found"));
+            assignee = findAssigneeInSameOrg(assigneeId, currentUser);
         }
 
         Task task = new Task(title, description, dueDate, project, assignee, currentUser.getUser());
@@ -94,9 +93,7 @@ public class TaskService {
             task.setStatus(status);
         }
         if (assigneeId != null) {
-            User assignee = userRepository.findById(assigneeId)
-                    .orElseThrow(() -> new RuntimeException("Assignee not found"));
-            task.setAssignee(assignee);
+            task.setAssignee(findAssigneeInSameOrg(assigneeId, currentUser));
         }
 
         Task savedTask = taskRepository.save(task);
@@ -113,6 +110,17 @@ public class TaskService {
         }
 
         taskRepository.delete(task);
+    }
+
+    private User findAssigneeInSameOrg(Long assigneeId, UserPrincipal currentUser) {
+        User assignee = userRepository.findById(assigneeId)
+                .orElseThrow(() -> new RuntimeException("Assignee not found"));
+
+        if (!assignee.getOrganization().getId().equals(currentUser.getUser().getOrganization().getId())) {
+            throw new RuntimeException("Access denied");
+        }
+
+        return assignee;
     }
 
     private TaskResponse toResponse(Task task) {
