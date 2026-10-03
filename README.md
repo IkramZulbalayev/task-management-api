@@ -1,8 +1,8 @@
 # Task Manager
 
-A full-stack, multi-tenant task management application built with **Java, Spring Boot, React, TypeScript, MySQL, and Docker**.
+A multi-tenant task management REST API built with **Java and Spring Boot**, designed for organizations to manage projects, tasks, assignments, and comments with secure role-based access.
 
-The project demonstrates secure authentication, role-based authorization, organization-scoped data isolation, REST API design, frontend-backend integration, automated testing, and containerized deployment.
+The project focuses on **JWT authentication, Spring Security, organization-scoped data isolation, service-layer authorization, REST API design, automated testing, and Dockerized deployment**.
 
 ---
 
@@ -14,8 +14,8 @@ The project demonstrates secure authentication, role-based authorization, organi
 - User registration and login
 - Role-based access control
 - Admin-only project and task creation
-- Protected frontend routes
-- CORS configuration for frontend-backend communication
+- Spring Security authorization
+- CORS configuration
 
 ### Multi-Tenant Data Isolation
 
@@ -68,29 +68,17 @@ Organization-wide dashboard with:
 
 ## Tech Stack
 
-### Backend
-
-| Technology | Purpose |
-|---|---|
-| Java | Backend language |
-| Spring Boot | Application framework |
-| Spring Security | Authentication and authorization |
-| JWT | Stateless authentication |
-| Spring Data JPA | Data access |
-| Hibernate | ORM |
-| MySQL | Relational database |
-| Maven | Build tool |
-| Swagger / OpenAPI | API documentation |
-
-### Frontend
-
-| Technology | Purpose |
-|---|---|
-| React | UI framework |
-| TypeScript | Type-safe frontend development |
-| Axios | HTTP communication |
-| React Router | Client-side routing |
-| CSS | Application styling |
+| **Category**       | **Technology**              |
+| ------------------ | --------------------------- |
+| Language / Runtime | Java 21                     |
+| Framework          | Spring Boot                 |
+| Security           | Spring Security, JWT        |
+| Persistence        | Spring Data JPA / Hibernate |
+| Database           | MySQL                       |
+| API Documentation  | Swagger / OpenAPI           |
+| Testing            | JUnit 5, Mockito, AssertJ   |
+| Containerization   | Docker, Docker Compose      |
+| Build Tool         | Maven                       |
 
 ### Testing
 
@@ -403,40 +391,6 @@ http://localhost:8080/swagger-ui/index.html
 
 ---
 
-## Running the Frontend
-
-### Open the Frontend Directory
-
-```bash
-cd frontend
-```
-
-### Install Dependencies
-
-```bash
-npm install
-```
-
-### Start the Frontend
-
-```bash
-npm run dev
-```
-
-The frontend will usually be available at:
-
-```text
-http://localhost:5173
-```
-
-Make sure the backend is running on:
-
-```text
-http://localhost:8080
-```
-
----
-
 ## Project Structure
 
 ```text
@@ -515,26 +469,3 @@ task-management-api/
 - Mocking with Mockito
 - Dockerized deployment
 - Frontend-backend integration
-
----
-
-## Future Improvements
-
-Possible future additions:
-
-- Refresh tokens
-- Task filtering and pagination
-- Task search
-- Task history / audit log
-- Notifications
-- More advanced role management
-- GitHub Actions CI
-- Integration tests
-- Frontend Docker container
-- Production deployment
-
----
-
-## About
-
-This project was built as a portfolio and university project to demonstrate full-stack development with a strong focus on **Java backend engineering, security, multi-tenant architecture, automated testing, and REST API design**.
